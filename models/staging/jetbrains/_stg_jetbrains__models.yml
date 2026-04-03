@@ -1,0 +1,17 @@
+version: 2
+
+models:
+  - name: stg_jetbrains__surveys
+    description: Cleaned JetBrains Developer Ecosystem Survey responses
+    columns:
+      - name: survey_response_id
+        tests:
+          - unique
+          - not_null
+
+  - name: stg_jetbrains__technologies_unpivoted
+    description: One row per respondent per technology from JetBrains survey
+    columns:
+      - name: technology_name
+        tests:
+          - not_null

@@ -1,0 +1,28 @@
+version: 2
+
+models:
+  - name: stg_stackoverflow__surveys
+    description: Cleaned Stack Overflow Developer Survey responses with standardized column names
+    columns:
+      - name: survey_response_id
+        description: Surrogate key from response_id + survey_year
+        tests:
+          - unique
+          - not_null
+      - name: survey_year
+        description: Year the survey was conducted
+      - name: languages_used
+        description: "Semicolon-delimited list of programming languages used"
+      - name: compensation_total
+        description: "Annual compensation (numeric, original currency)"
+
+  - name: stg_stackoverflow__technologies_unpivoted
+    description: One row per respondent per technology, with usage and desire flags
+    columns:
+      - name: technology_name
+        tests:
+          - not_null
+      - name: technology_category
+        tests:
+          - accepted_values:
+              values: ['language', 'database', 'platform', 'web_framework', 'other_tech', 'dev_tool']

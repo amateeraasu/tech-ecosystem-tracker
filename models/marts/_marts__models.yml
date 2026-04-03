@@ -1,0 +1,50 @@
+version: 2
+
+models:
+  - name: dim_technologies
+    description: >
+      Technology dimension with canonical names, categories, and source coverage flags.
+      One row per unique technology.
+    columns:
+      - name: technology_id
+        tests:
+          - unique
+          - not_null
+      - name: technology_name
+        tests:
+          - unique
+          - not_null
+
+  - name: fct_technology_adoption
+    description: >
+      Unified adoption metrics across Stack Overflow, JetBrains, and GitHub.
+      Each row is a technology + year + source combination.
+    columns:
+      - name: technology_name
+        tests:
+          - not_null
+
+  - name: fct_technology_sentiment
+    description: >
+      Technology desire vs. usage with lifecycle classification
+      (emerging, growing_interest, declining, established_but_waning, stable).
+    columns:
+      - name: lifecycle_stage
+        tests:
+          - accepted_values:
+              values: ['emerging', 'growing_interest', 'declining', 'established_but_waning', 'stable']
+
+  - name: fct_salary_by_stack
+    description: >
+      Compensation analysis by technology, country, role, and experience.
+      Includes salary premium calculation vs. global median.
+
+  - name: fct_said_vs_did
+    description: >
+      The headline analysis: compares survey "I use X" claims with actual GitHub activity.
+      Classifications: over_reported, under_reported, consistent.
+    columns:
+      - name: said_vs_did_classification
+        tests:
+          - accepted_values:
+              values: ['over_reported', 'under_reported', 'consistent']

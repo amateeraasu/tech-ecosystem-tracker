@@ -1,0 +1,16 @@
+version: 2
+
+models:
+  - name: stg_github__monthly_activity
+    description: Monthly GitHub activity aggregated by language and event type
+    columns:
+      - name: activity_id
+        tests:
+          - unique
+          - not_null
+      - name: repo_language
+        tests:
+          - not_null
+      - name: activity_month
+        tests:
+          - not_null

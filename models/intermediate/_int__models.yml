@@ -1,0 +1,23 @@
+version: 2
+
+models:
+  - name: int_unified__technology_spine
+    description: >
+      Canonical mapping of technology names across Stack Overflow, JetBrains,
+      and GitHub data sources. The Rosetta Stone for cross-source analysis.
+    columns:
+      - name: technology_id
+        tests:
+          - not_null
+      - name: canonical_name
+        tests:
+          - not_null
+
+  - name: int_stackoverflow__yearly_adoption
+    description: Yearly technology adoption rates from SO survey data
+
+  - name: int_jetbrains__yearly_adoption
+    description: Yearly technology adoption rates from JetBrains survey data
+
+  - name: int_github__yearly_activity
+    description: Yearly GitHub activity metrics per technology
