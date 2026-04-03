@@ -19,7 +19,7 @@ def get_snowflake_connection():
         user=os.environ["SNOWFLAKE_USER"],
         password=os.environ["SNOWFLAKE_PASSWORD"],
         database="TECH_ECOSYSTEM",
-        schema="ANALYTICS",
+        schema="RAW_ANALYTICS",
         warehouse="TECH_WH",
     )
 
@@ -63,7 +63,7 @@ def fetch_analysis_data(conn) -> dict:
                SUM(respondent_count) as total_respondents
         FROM fct_salary_by_stack
         WHERE survey_year = (SELECT MAX(survey_year) FROM fct_salary_by_stack)
-          AND country = 'United States'
+          AND country = 'United States of America'
         GROUP BY 1, 2
         HAVING total_respondents >= 50
         ORDER BY avg_premium_pct DESC

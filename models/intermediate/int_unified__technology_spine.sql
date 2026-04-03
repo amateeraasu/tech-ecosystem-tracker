@@ -125,7 +125,7 @@ with technology_mapping as (
         ('Elixir',          'Elixir',       'language',       'general'),
         ('Haskell',         'Haskell',      'language',       'general'),
         ('Zig',             'Zig',          'language',       'systems'),
-        ('Jupyter Notebook','Python',       'language',       'data'),
+        ('Jupyter Notebook','Jupyter Notebook','dev_tool',      'ide'),
         ('HCL',             'HCL',          'language',       'devops'),
         ('Vue',             'Vue.js',       'web_framework',  'frontend')
 
