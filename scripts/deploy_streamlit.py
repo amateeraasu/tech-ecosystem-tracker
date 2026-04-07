@@ -1,6 +1,7 @@
 #!/usr/bin/env python3
 """
 Deploy Tech Ecosystem Tracker Streamlit app to Snowflake.
+Uses snowflake-connector-python — no snowsql CLI required.
 
 Usage:
     python scripts/deploy_streamlit.py
@@ -11,9 +12,9 @@ Usage:
 import os
 import sys
 import argparse
-import subprocess
 from pathlib import Path
 from dotenv import load_dotenv
+import snowflake.connector
 
 # ── Load env ──────────────────────────────────────────────────────────────────
 ROOT = Path(__file__).resolve().parent.parent
@@ -22,9 +23,7 @@ load_dotenv(ROOT / ".env")
 ACCOUNT  = os.environ["SNOWFLAKE_ACCOUNT"]
 USER     = os.environ["SNOWFLAKE_USER"]
 PASSWORD = os.environ["SNOWFLAKE_PASSWORD"]
-API_KEY  = os.environ.get("ANTHROPIC_API_KEY", "")
 
-STAGE    = "@TECH_ECOSYSTEM.PUBLIC.STREAMLIT_STAGE"
 APP_DIR  = ROOT / "app"
 SQL_FILE = ROOT / "snowflake" / "04_streamlit_setup.sql"
 
@@ -34,77 +33,106 @@ APP_FILES = [
 ]
 
 
-def run_snowsql(commands: list[str], dry_run: bool = False) -> bool:
-    """Execute SnowSQL commands. Returns True on success."""
-    script = "\n".join(commands)
+def get_conn(role: str = "SYSADMIN") -> snowflake.connector.SnowflakeConnection:
+    return snowflake.connector.connect(
+        account=ACCOUNT,
+        user=USER,
+        password=PASSWORD,
+        database="TECH_ECOSYSTEM",
+        schema="PUBLIC",
+        warehouse="TECH_WH",
+        role=role,
+    )
+
+
+def run_sql(sql: str, role: str = "SYSADMIN", dry_run: bool = False) -> bool:
+    """Execute one or more semicolon-separated SQL statements."""
+    statements = [s.strip() for s in sql.split(";") if s.strip()]
     if dry_run:
-        print("[DRY RUN] Would execute SnowSQL:\n" + script)
+        print(f"[DRY RUN] Would execute {len(statements)} statement(s) as {role}:")
+        for s in statements[:3]:
+            print(f"  {s[:120]}…" if len(s) > 120 else f"  {s}")
+        if len(statements) > 3:
+            print(f"  … and {len(statements) - 3} more")
         return True
-
-    cmd = [
-        "snowsql",
-        "-a", ACCOUNT,
-        "-u", USER,
-        "--password", PASSWORD,
-        "-q", script,
-        "-o", "friendly=false",
-        "-o", "timing=false",
-    ]
-    result = subprocess.run(cmd, capture_output=True, text=True)
-    if result.returncode != 0:
-        print(f"ERROR: SnowSQL failed:\n{result.stderr}")
+    try:
+        conn = get_conn(role)
+        cur = conn.cursor()
+        for stmt in statements:
+            cur.execute(stmt)
+        conn.close()
+        return True
+    except Exception as e:
+        print(f"  ERROR: {e}")
         return False
-    print(result.stdout)
-    return True
 
-
-def check_snowsql_installed() -> bool:
-    result = subprocess.run(["snowsql", "--version"], capture_output=True)
-    return result.returncode == 0
-
-
-def inject_api_key(sql_path: Path) -> str:
-    """Return SQL with <YOUR_KEY> replaced by actual API key."""
-    sql = sql_path.read_text()
-    if "<YOUR_KEY>" in sql:
-        if not API_KEY:
-            print("ERROR: ANTHROPIC_API_KEY not set in .env — cannot inject into SQL.")
-            sys.exit(1)
-        sql = sql.replace("<YOUR_KEY>", API_KEY)
-    return sql
 
 
 def step_run_setup_sql(dry_run: bool) -> bool:
     print("\n── Step 1: Running 04_streamlit_setup.sql ────────────────────────────")
-    sql = inject_api_key(SQL_FILE)
-    if dry_run:
-        print("[DRY RUN] Would execute setup SQL (API key injected).")
-        return True
-    return run_snowsql([sql], dry_run=False)
+    sql = SQL_FILE.read_text()
+    if not run_sql(sql, role="SYSADMIN", dry_run=dry_run):
+        return False
+    print("  SQL setup complete.")
+    return True
 
 
 def step_upload_files(dry_run: bool) -> bool:
     print("\n── Step 2: Uploading app files to stage ──────────────────────────────")
-    for f in APP_FILES:
-        if not f.exists():
-            print(f"WARNING: {f} not found — skipping.")
-            continue
-        put_cmd = f"PUT 'file://{f}' {STAGE} AUTO_COMPRESS=FALSE OVERWRITE=TRUE;"
-        print(f"  Uploading {f.name}…")
-        if not run_snowsql([put_cmd], dry_run=dry_run):
-            return False
-    return True
+    if dry_run:
+        for f in APP_FILES:
+            print(f"  [DRY RUN] Would upload {f.name}")
+        return True
+
+    try:
+        conn = get_conn("SYSADMIN")
+        cur = conn.cursor()
+        for f in APP_FILES:
+            if not f.exists():
+                print(f"  WARNING: {f} not found — skipping.")
+                continue
+            print(f"  Uploading {f.name}…", end=" ", flush=True)
+            cur.execute(
+                f"PUT 'file://{f}' @TECH_ECOSYSTEM.PUBLIC.STREAMLIT_STAGE "
+                f"AUTO_COMPRESS=FALSE OVERWRITE=TRUE"
+            )
+            rows = cur.fetchall()
+            status = rows[0][6] if rows else "unknown"
+            print(status)
+        conn.close()
+        return True
+    except Exception as e:
+        print(f"\n  ERROR uploading files: {e}")
+        return False
 
 
 def step_verify(dry_run: bool) -> bool:
     print("\n── Step 3: Verifying deployment ──────────────────────────────────────")
-    verify_sql = """
-        USE DATABASE TECH_ECOSYSTEM;
-        USE SCHEMA PUBLIC;
-        SHOW STREAMLITS LIKE 'TECH_ECOSYSTEM_TRACKER';
-        LIST @STREAMLIT_STAGE;
-    """
-    return run_snowsql([verify_sql], dry_run=dry_run)
+    if dry_run:
+        print("  [DRY RUN] Would verify Streamlit app and stage contents.")
+        return True
+    try:
+        conn = get_conn("SYSADMIN")
+        cur = conn.cursor()
+
+        cur.execute("SHOW STREAMLITS LIKE 'TECH_ECOSYSTEM_TRACKER'")
+        apps = cur.fetchall()
+        if apps:
+            print(f"  Streamlit app: {apps[0][1]} ✓")
+        else:
+            print("  WARNING: Streamlit app not found after deployment.")
+
+        cur.execute("LIST @TECH_ECOSYSTEM.PUBLIC.STREAMLIT_STAGE")
+        files = cur.fetchall()
+        print(f"  Stage files ({len(files)}):")
+        for row in files:
+            print(f"    {row[0]}  ({row[1]} bytes)")
+
+        conn.close()
+        return bool(apps)
+    except Exception as e:
+        print(f"  ERROR during verification: {e}")
+        return False
 
 
 def print_success():
@@ -120,13 +148,9 @@ def print_success():
 
 def main():
     parser = argparse.ArgumentParser(description="Deploy Streamlit app to Snowflake")
-    parser.add_argument("--dry-run", action="store_true", help="Print actions without executing")
+    parser.add_argument("--dry-run", action="store_true")
     parser.add_argument("--skip-sql", action="store_true", help="Skip SQL setup, only upload files")
     args = parser.parse_args()
-
-    if not check_snowsql_installed():
-        print("ERROR: snowsql not found. Install from https://docs.snowflake.com/en/user-guide/snowsql-install-config")
-        sys.exit(1)
 
     ok = True
     if not args.skip_sql:

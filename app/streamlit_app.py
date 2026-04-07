@@ -248,48 +248,46 @@ def top_skills_for_role(df: pd.DataFrame, skill_col: str, top_n: int = 15) -> pd
 
 
 # ──────────────────────────────────────────────────────────────────────────────
-# ANTHROPIC  — 3-sentence narrative insight
-# In Snowflake: reads key from secret TECH_ECOSYSTEM.PUBLIC.ANTHROPIC_SECRET
-# Locally:      reads from ANTHROPIC_API_KEY env var
+# AI INSIGHTS
+# In Snowflake: Snowflake Cortex (no API key / network rules needed)
+# Locally:      Anthropic API via ANTHROPIC_API_KEY env var
 # ──────────────────────────────────────────────────────────────────────────────
-def _get_anthropic_key() -> str:
+def generate_insight(context: str, prompt_prefix: str = "") -> str:
+    default_prefix = (
+        "You are a developer trends analyst. "
+        "Write exactly 3 concise, data-grounded sentences. "
+        "Cite specific numbers and year-over-year changes where available. "
+        "Be direct — no preamble.\n\n"
+        f"Data snapshot:\n"
+    )
+    full_prompt = (prompt_prefix or default_prefix) + context
+
     if _IN_SNOWFLAKE:
+        # Snowflake Cortex — works on all account types including trial
         try:
+            escaped = full_prompt.replace("'", "\\'")
             row = _SF_SESSION.sql(
-                "SELECT SYSTEM$GET_SECRET('TECH_ECOSYSTEM.PUBLIC.ANTHROPIC_SECRET') AS k"
+                f"SELECT SNOWFLAKE.CORTEX.COMPLETE('mistral-7b', '{escaped}') AS response"
             ).collect()
-            return row[0]["K"] if row else ""
-        except Exception:
-            return ""
-    return os.environ.get("ANTHROPIC_API_KEY", "")
-
-
-def generate_insight(context: str) -> str:
-    import anthropic as _anthropic
-    api_key = _get_anthropic_key()
-    if not api_key:
-        return "Configure ANTHROPIC_API_KEY (local) or ANTHROPIC_SECRET (Snowflake) to enable AI insights."
-    try:
-        client = _anthropic.Anthropic(api_key=api_key)
-        msg = client.messages.create(
-            model="claude-sonnet-4-6",
-            max_tokens=220,
-            messages=[
-                {
-                    "role": "user",
-                    "content": (
-                        "You are a developer trends analyst. "
-                        "Write exactly 3 concise, data-grounded sentences about the technology "
-                        "adoption trends shown below. Cite specific numbers and year-over-year "
-                        "changes where available. Be direct — no preamble.\n\n"
-                        f"Data snapshot:\n{context}"
-                    ),
-                }
-            ],
-        )
-        return msg.content[0].text.strip()
-    except Exception as exc:
-        return f"Could not generate insight: {exc}"
+            return row[0]["RESPONSE"].strip() if row else "No response from Cortex."
+        except Exception as exc:
+            return f"Cortex error: {exc}"
+    else:
+        # Local: use Anthropic API
+        api_key = os.environ.get("ANTHROPIC_API_KEY", "")
+        if not api_key:
+            return "Set ANTHROPIC_API_KEY in .env to enable AI insights locally."
+        try:
+            import anthropic as _anthropic
+            client = _anthropic.Anthropic(api_key=api_key)
+            msg = client.messages.create(
+                model="claude-sonnet-4-6",
+                max_tokens=220,
+                messages=[{"role": "user", "content": full_prompt}],
+            )
+            return msg.content[0].text.strip()
+        except Exception as exc:
+            return f"Could not generate insight: {exc}"
 
 
 # ──────────────────────────────────────────────────────────────────────────────
@@ -1118,16 +1116,18 @@ elif page == "🧑‍💻  Data Roles Skills":
         )
 
         if st.button("✨ Generate AI Insight", key="btn_insight_dr"):
-            with st.spinner("Asking Claude…"):
-                prompt = (
-                    "You are a data industry career analyst. "
-                    "Write exactly 3 concise, data-grounded sentences about the skill landscape "
-                    "for this data role based on the survey data below. "
-                    "Focus on what skills dominate, any surprising inclusions, and what this means "
-                    "for someone entering or growing in this role. Be direct — no preamble.\n\n"
-                    f"Data snapshot:\n{ai_context}"
+            with st.spinner("Asking AI…"):
+                insight = generate_insight(
+                    context=ai_context,
+                    prompt_prefix=(
+                        "You are a data industry career analyst. "
+                        "Write exactly 3 concise, data-grounded sentences about the skill landscape "
+                        "for this data role based on the survey data below. "
+                        "Focus on what skills dominate, any surprising inclusions, and what this means "
+                        "for someone entering or growing in this role. Be direct — no preamble.\n\n"
+                        "Data snapshot:\n"
+                    ),
                 )
-                insight = generate_insight(prompt)
             st.markdown(
                 f"""
                 <div class="insight-box">
