@@ -25,4 +25,5 @@ models:
       - name: technology_category
         tests:
           - accepted_values:
-              values: ['language', 'database', 'platform', 'web_framework', 'other_tech', 'dev_tool']
+              arguments:
+                values: ['language', 'database', 'platform', 'web_framework', 'other_tech', 'dev_tool']
