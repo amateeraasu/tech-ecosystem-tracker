@@ -32,3 +32,4 @@ venv/
 # IDE
 .vscode/
 .idea/
+profiling_output/

@@ -488,6 +488,7 @@ with st.sidebar:
             "🔍  Said vs Did",
             "💰  Developer Economics",
             "🧑‍💻  Data Roles Skills",
+            "🗄️  Raw Data (Sample)",
         ],
         label_visibility="collapsed",
     )
@@ -1308,3 +1309,70 @@ elif page == "🧑‍💻  Data Roles Skills":
                     top_skills_for_role(subset_raw, sel_skill_cat, 30),
                     use_container_width=True,
                 )
+
+
+# ══════════════════════════════════════════════════════════════════════════════
+# PAGE 5 — RAW DATA (SAMPLE)
+# ══════════════════════════════════════════════════════════════════════════════
+elif page == "🗄️  Raw Data (Sample)":
+    st.markdown('<div class="page-title">Raw Data (Sample)</div>', unsafe_allow_html=True)
+    st.markdown(
+        '<div class="page-subtitle">Preview a few rows from the `TECH_ECOSYSTEM.RAW` tables</div>',
+        unsafe_allow_html=True,
+    )
+
+    tables_df = query(
+        """
+        SELECT table_name
+        FROM TECH_ECOSYSTEM.INFORMATION_SCHEMA.TABLES
+        WHERE table_schema = 'RAW'
+          AND table_type = 'BASE TABLE'
+        ORDER BY table_name
+        """
+    )
+
+    if tables_df.empty:
+        st.warning("No tables found in `TECH_ECOSYSTEM.RAW`. Did the loaders run?")
+        st.stop()
+
+    table_names = tables_df["table_name"].astype(str).tolist()
+
+    col1, col2, col3 = st.columns([3, 1, 2])
+    with col1:
+        selected_table = st.selectbox("RAW table", table_names, index=0)
+    with col2:
+        limit = st.number_input("Rows", min_value=5, max_value=500, value=50, step=5)
+    with col3:
+        order_mode = st.selectbox("Order by", ["(none)", "_loaded_at desc", "first column asc"], index=1)
+
+    fqtn = f"TECH_ECOSYSTEM.RAW.{selected_table}"
+
+    cols = query(
+        f"""
+        SELECT column_name
+        FROM TECH_ECOSYSTEM.INFORMATION_SCHEMA.COLUMNS
+        WHERE table_schema = 'RAW'
+          AND table_name = '{selected_table}'
+        ORDER BY ordinal_position
+        """
+    )
+    col_list = cols["column_name"].astype(str).tolist() if not cols.empty else []
+    first_col = col_list[0] if col_list else None
+
+    order_sql = ""
+    if order_mode == "_loaded_at desc":
+        if any(c.lower() == "_loaded_at" for c in col_list):
+            order_sql = " ORDER BY _loaded_at DESC"
+    elif order_mode == "first column asc" and first_col:
+        order_sql = f' ORDER BY "{first_col}" ASC'
+
+    df = query(f"SELECT * FROM {fqtn}{order_sql} LIMIT {int(limit)}")
+
+    st.markdown("### Columns")
+    if col_list:
+        st.code(", ".join(col_list))
+    else:
+        st.caption("Could not load column list.")
+
+    st.markdown("### Sample rows")
+    st.dataframe(df, use_container_width=True)
