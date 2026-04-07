@@ -1,50 +1,251 @@
 version: 2
 
 models:
+  # ── dim_technologies ──────────────────────────────────────────────────────────
   - name: dim_technologies
     description: >
       Technology dimension with canonical names, categories, and source coverage flags.
       One row per unique technology.
     columns:
       - name: technology_id
-        tests:
-          - unique
-          - not_null
-      - name: technology_name
+        description: Surrogate key (hash of technology_name)
         tests:
           - unique
           - not_null
 
+      - name: technology_name
+        description: Canonical technology name (e.g. "Python", "PostgreSQL")
+        tests:
+          - unique
+          - not_null
+
+      - name: technology_category
+        description: High-level category (Language, Database, Platform, etc.)
+        tests:
+          - not_null
+          - accepted_values:
+              values:
+                - Language
+                - Database
+                - Platform
+                - Framework
+                - Tool
+                - Library
+                - Cloud
+                - Other
+
+  # ── fct_technology_adoption ───────────────────────────────────────────────────
   - name: fct_technology_adoption
     description: >
       Unified adoption metrics across Stack Overflow, JetBrains, and GitHub.
       Each row is a technology + year + source combination.
+    tests:
+      - dbt_utils.unique_combination_of_columns:
+          combination_of_columns:
+            - technology_name
+            - year
+            - data_source
     columns:
       - name: technology_name
         tests:
           - not_null
 
-  - name: fct_technology_sentiment
-    description: >
-      Technology desire vs. usage with lifecycle classification
-      (emerging, growing_interest, declining, established_but_waning, stable).
-    columns:
-      - name: lifecycle_stage
+      - name: year
         tests:
+          - not_null
           - accepted_values:
-              values: ['emerging', 'growing_interest', 'declining', 'established_but_waning', 'stable']
+              values: [2021, 2022, 2023, 2024, 2025]
 
-  - name: fct_salary_by_stack
-    description: >
-      Compensation analysis by technology, country, role, and experience.
-      Includes salary premium calculation vs. global median.
+      - name: data_source
+        tests:
+          - not_null
+          - accepted_values:
+              values: ['stackoverflow', 'jetbrains', 'github']
 
+      - name: survey_adoption_pct
+        description: "Percentage of respondents using this technology (0–100). Null for GitHub rows."
+        tests:
+          - dbt_utils.accepted_range:
+              min_value: 0
+              max_value: 100
+              where: "survey_adoption_pct is not null"
+
+      - name: survey_desire_pct
+        description: "Percentage of respondents wanting to use this technology (0–100)."
+        tests:
+          - dbt_utils.accepted_range:
+              min_value: 0
+              max_value: 100
+              where: "survey_desire_pct is not null"
+
+      - name: github_event_share
+        description: "Share of GitHub events attributed to this technology (0–1)."
+        tests:
+          - dbt_utils.accepted_range:
+              min_value: 0
+              max_value: 1
+              where: "github_event_share is not null"
+
+      - name: total_respondents
+        description: "Survey sample size. Null for GitHub rows."
+        tests:
+          - dbt_utils.accepted_range:
+              min_value: 100
+              max_value: 300000
+              where: "total_respondents is not null"
+
+  # ── fct_said_vs_did ──────────────────────────────────────────────────────────
   - name: fct_said_vs_did
     description: >
       The headline analysis: compares survey "I use X" claims with actual GitHub activity.
       Classifications: over_reported, under_reported, consistent.
+    tests:
+      - dbt_utils.unique_combination_of_columns:
+          combination_of_columns:
+            - technology_name
+            - year
     columns:
+      - name: technology_name
+        tests:
+          - not_null
+
+      - name: year
+        tests:
+          - not_null
+          - accepted_values:
+              values: [2021, 2022, 2023, 2024, 2025]
+
       - name: said_vs_did_classification
         tests:
+          - not_null
           - accepted_values:
               values: ['over_reported', 'under_reported', 'consistent']
+
+      - name: avg_survey_adoption_pct
+        tests:
+          - dbt_utils.accepted_range:
+              min_value: 0
+              max_value: 100
+              where: "avg_survey_adoption_pct is not null"
+
+      - name: github_activity_pct
+        tests:
+          - dbt_utils.accepted_range:
+              min_value: 0
+              max_value: 100
+              where: "github_activity_pct is not null"
+
+      - name: said_vs_did_gap
+        description: >
+          avg_survey_adoption_pct minus github_activity_pct.
+          Must be consistent with the underlying values when both are present.
+        tests:
+          - dbt_utils.accepted_range:
+              min_value: -100
+              max_value: 100
+
+  # ── fct_salary_by_stack ───────────────────────────────────────────────────────
+  - name: fct_salary_by_stack
+    description: >
+      Compensation analysis by technology, country, role, and experience.
+      Includes salary premium calculation vs. global median.
+    columns:
+      - name: technology_name
+        tests:
+          - not_null
+
+      - name: survey_year
+        tests:
+          - not_null
+          - accepted_values:
+              values: [2021, 2022, 2023, 2024, 2025]
+
+      - name: median_salary
+        description: "Median annual USD salary. Must be in realistic range."
+        tests:
+          - not_null
+          - dbt_utils.accepted_range:
+              min_value: 20000
+              max_value: 500000
+
+      - name: p25_salary
+        tests:
+          - dbt_utils.accepted_range:
+              min_value: 20000
+              max_value: 500000
+              where: "p25_salary is not null"
+
+      - name: p75_salary
+        tests:
+          - dbt_utils.accepted_range:
+              min_value: 20000
+              max_value: 500000
+              where: "p75_salary is not null"
+
+      - name: respondent_count
+        description: "At least 10 respondents required for a meaningful salary estimate."
+        tests:
+          - dbt_utils.accepted_range:
+              min_value: 1
+              max_value: 100000
+
+      - name: salary_premium_pct
+        description: "How far above/below global median. Realistic range: -90% to +500%."
+        tests:
+          - dbt_utils.accepted_range:
+              min_value: -90
+              max_value: 500
+              where: "salary_premium_pct is not null"
+
+  # ── fct_technology_sentiment ──────────────────────────────────────────────────
+  - name: fct_technology_sentiment
+    description: >
+      Technology desire vs. usage with lifecycle classification.
+      (emerging, growing_interest, declining, established_but_waning, stable)
+    tests:
+      - dbt_utils.unique_combination_of_columns:
+          combination_of_columns:
+            - technology_name
+            - year
+    columns:
+      - name: technology_name
+        tests:
+          - not_null
+
+      - name: year
+        tests:
+          - not_null
+          - accepted_values:
+              values: [2021, 2022, 2023, 2024, 2025]
+
+      - name: lifecycle_stage
+        tests:
+          - not_null
+          - accepted_values:
+              values:
+                - emerging
+                - growing_interest
+                - declining
+                - established_but_waning
+                - stable
+
+      - name: adoption_pct
+        tests:
+          - not_null
+          - dbt_utils.accepted_range:
+              min_value: 0
+              max_value: 100
+
+      - name: desire_pct
+        tests:
+          - not_null
+          - dbt_utils.accepted_range:
+              min_value: 0
+              max_value: 100
+
+      - name: desire_gap
+        description: "desire_pct minus adoption_pct. Range -100 to 100."
+        tests:
+          - dbt_utils.accepted_range:
+              min_value: -100
+              max_value: 100
