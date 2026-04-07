@@ -26,16 +26,21 @@ CREATE OR REPLACE EXTERNAL ACCESS INTEGRATION anthropic_access_integration
   ALLOWED_AUTHENTICATION_SECRETS = (ANTHROPIC_SECRET)
   ENABLED = TRUE;
 
+
+
 -- ── 4. Grant access to SYSADMIN so the Streamlit app can use it ───────────────
 GRANT READ ON SECRET ANTHROPIC_SECRET TO ROLE SYSADMIN;
 GRANT USAGE ON INTEGRATION anthropic_access_integration TO ROLE SYSADMIN;
 
--- ── 5. Create the Streamlit app ───────────────────────────────────────────────
--- Switch to SYSADMIN to own the app (consistent with rest of project)
+-- ── 5. Stage for uploading app files (must exist before Streamlit object) ─────
 USE ROLE SYSADMIN;
 USE DATABASE TECH_ECOSYSTEM;
 USE SCHEMA PUBLIC;
 
+CREATE STAGE IF NOT EXISTS TECH_ECOSYSTEM.PUBLIC.STREAMLIT_STAGE
+  DIRECTORY = (ENABLE = TRUE);
+
+-- ── 6. Create the Streamlit app ───────────────────────────────────────────────
 CREATE OR REPLACE STREAMLIT TECH_ECOSYSTEM_TRACKER
   ROOT_LOCATION = '@TECH_ECOSYSTEM.PUBLIC.STREAMLIT_STAGE'
   MAIN_FILE = 'streamlit_app.py'
@@ -43,9 +48,8 @@ CREATE OR REPLACE STREAMLIT TECH_ECOSYSTEM_TRACKER
   EXTERNAL_ACCESS_INTEGRATIONS = (anthropic_access_integration)
   COMMENT = 'Tech Ecosystem Tracker — SO + JetBrains + GitHub analytics';
 
--- ── 6. Stage for uploading app files ─────────────────────────────────────────
-CREATE STAGE IF NOT EXISTS TECH_ECOSYSTEM.PUBLIC.STREAMLIT_STAGE
-  DIRECTORY = (ENABLE = TRUE);
+-- ── 7. Grant access ───────────────────────────────────────────────────────────
+GRANT USAGE ON STREAMLIT TECH_ECOSYSTEM_TRACKER TO ROLE SYSADMIN;
 
 -- =============================================================================
 -- After running this script:
