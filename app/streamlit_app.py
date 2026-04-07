@@ -200,29 +200,50 @@ st.markdown(
     [data-testid="stWidgetLabel"],
     [data-testid="stWidgetLabel"] p { color: #FAFAFA !important; }
 
-    /* ── Selectbox dropdown text ────────────────────────────────────────────── */
-    /* Selected value shown in the button — dark text on white bg */
+    /* ── Selectbox: selected value in the button ───────────────────────────── */
     [data-baseweb="select"] div[role="button"],
     [data-baseweb="select"] div[role="combobox"],
     [data-baseweb="select"] [data-baseweb="input"],
     [data-baseweb="select"] input { color: #000000 !important; }
 
-    /* Dropdown list panel */
-    [role="listbox"],
-    [data-baseweb="popover"],
-    [data-baseweb="menu"] { background-color: #FFFFFF !important; }
+    /* ── Dropdown menu panel ────────────────────────────────────────────────── */
+    [data-baseweb="menu"],
+    [data-baseweb="popover"] ul,
+    [role="listbox"] { background-color: #FFFFFF !important; }
 
-    /* Options in the list */
-    [role="listbox"] li,
-    [role="option"] { color: #000000 !important; background-color: #FFFFFF !important; }
-    [role="listbox"] li:hover,
-    [role="option"]:hover { background-color: #F0F2F6 !important; color: #000000 !important; }
+    /* ── Option rows ────────────────────────────────────────────────────────── */
+    [data-baseweb="menu"] li,
+    [data-baseweb="menu"] [role="option"] {
+        color: #262730 !important;
+        background-color: #FFFFFF !important;
+    }
 
-    /* Selected option */
-    [role="option"][aria-selected="true"] {
+    /* ── Option inner text div (BaseWeb wraps text here) ───────────────────── */
+    [data-baseweb="menu"] li > div,
+    [data-baseweb="menu"] li > div > div,
+    [data-baseweb="menu"] [role="option"] > div {
+        color: #262730 !important;
+    }
+
+    /* ── Hover ──────────────────────────────────────────────────────────────── */
+    [data-baseweb="menu"] li:hover,
+    [data-baseweb="menu"] [role="option"]:hover {
         background-color: #0E4C92 !important;
         color: #FFFFFF !important;
     }
+    [data-baseweb="menu"] li:hover > div,
+    [data-baseweb="menu"] li:hover > div > div {
+        color: #FFFFFF !important;
+    }
+
+    /* ── Selected ───────────────────────────────────────────────────────────── */
+    [data-baseweb="menu"] [role="option"][aria-selected="true"],
+    [data-baseweb="menu"] li[aria-selected="true"] {
+        background-color: #0E4C92 !important;
+        color: #FFFFFF !important;
+    }
+    [data-baseweb="menu"] [role="option"][aria-selected="true"] > div,
+    [data-baseweb="menu"] li[aria-selected="true"] > div { color: #FFFFFF !important; }
 
     /* ── Expanders ──────────────────────────────────────────────────────────── */
     [data-testid="stExpander"] summary,
