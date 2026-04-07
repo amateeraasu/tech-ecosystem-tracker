@@ -116,6 +116,25 @@ st.markdown(
         letter-spacing: 0.08em;
         margin: 1.5rem 0 0.75rem 0;
     }
+
+    /* Base readability (main app) */
+    [data-testid="stAppViewContainer"] {
+        background: #0E1117;
+        color: #FAFAFA;
+    }
+    [data-testid="stAppViewContainer"] .stMarkdown,
+    [data-testid="stAppViewContainer"] .stMarkdown p,
+    [data-testid="stAppViewContainer"] .stMarkdown li,
+    [data-testid="stAppViewContainer"] label,
+    [data-testid="stAppViewContainer"] [data-testid="stMetricLabel"],
+    [data-testid="stAppViewContainer"] [data-testid="stWidgetLabel"] {
+        color: #FAFAFA;
+    }
+    [data-testid="stAppViewContainer"] small,
+    [data-testid="stAppViewContainer"] .stCaption,
+    [data-testid="stAppViewContainer"] .stMarkdown blockquote {
+        color: #C8D6E0;
+    }
     </style>
     """,
     unsafe_allow_html=True,
