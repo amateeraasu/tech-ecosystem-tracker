@@ -45,40 +45,66 @@ st.markdown(
     /* Top header bar */
     [data-testid="stHeader"] { background: #0E1117; }
 
-    /* Sidebar */
-    [data-testid="stSidebar"] {
-        background: #161C27;
+    /* Sidebar container */
+    [data-testid="stSidebar"],
+    [data-testid="stSidebar"] > div:first-child {
+        background-color: #161C27 !important;
         border-right: 1px solid #2A3347;
     }
-    /* Force sidebar text to be readable (Streamlit/Snowflake can override theme colors) */
-    [data-testid="stSidebar"] * {
+
+    /* All sidebar text white */
+    [data-testid="stSidebar"],
+    [data-testid="stSidebar"] *,
+    [data-testid="stSidebar"] p,
+    [data-testid="stSidebar"] span,
+    [data-testid="stSidebar"] label,
+    [data-testid="stSidebar"] div {
         color: #FAFAFA !important;
     }
-    [data-testid="stSidebar"] a,
-    [data-testid="stSidebar"] [role="link"] {
-        color: #FAFAFA !important;
-        text-decoration: none;
+
+    /* Sidebar headings */
+    [data-testid="stSidebar"] h1,
+    [data-testid="stSidebar"] h2,
+    [data-testid="stSidebar"] h3 {
+        color: #00D4FF !important;
     }
-    /* Sidebar nav (pages) */
-    [data-testid="stSidebarNav"] a {
+
+    /* Radio buttons (page nav) */
+    [data-testid="stSidebar"] [data-testid="stRadio"] label,
+    [data-testid="stSidebar"] [data-testid="stRadio"] div,
+    [data-testid="stSidebar"] [data-testid="stRadio"] p {
         color: #FAFAFA !important;
+    }
+    [data-testid="stSidebar"] [data-testid="stRadio"] label:hover {
+        background: rgba(255,255,255,0.08) !important;
         border-radius: 6px;
     }
+
+    /* Sidebar nav links (multi-page apps) */
+    [data-testid="stSidebarNav"] a {
+        color: #FAFAFA !important;
+        text-decoration: none !important;
+        padding: 0.5rem 1rem !important;
+        border-radius: 6px !important;
+        display: block !important;
+        transition: background 0.15s ease;
+    }
     [data-testid="stSidebarNav"] a:hover {
-        background: rgba(250, 250, 250, 0.08);
+        background: rgba(255,255,255,0.1) !important;
     }
     [data-testid="stSidebarNav"] a[aria-current="page"] {
-        background: rgba(0, 212, 255, 0.14);
-        border-left: 3px solid #00D4FF;
-        padding-left: 0.75rem;
+        background: #0E4C92 !important;
+        border-left: 4px solid #29B5E8 !important;
+        color: #FFFFFF !important;
     }
-    /* Ensure icons/emoji remain visible */
+    [data-testid="stSidebarNav"] a span {
+        color: #FAFAFA !important;
+    }
+
+    /* SVG icons */
     [data-testid="stSidebar"] svg {
         fill: #FAFAFA !important;
         color: #FAFAFA !important;
-    }
-    [data-testid="stSidebar"] h1, [data-testid="stSidebar"] h2 {
-        color: #00D4FF;
     }
 
     /* Page title */
