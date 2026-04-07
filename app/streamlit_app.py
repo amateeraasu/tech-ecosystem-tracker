@@ -367,7 +367,7 @@ if page == "📈  Technology Adoption":
             technology_category,
             data_source,
             survey_adoption_pct
-        FROM fct_technology_adoption
+        FROM TECH_ECOSYSTEM.RAW_ANALYTICS.fct_technology_adoption
         WHERE year BETWEEN 2021 AND 2025
           AND data_source IN ('stackoverflow', 'jetbrains')
           AND survey_adoption_pct IS NOT NULL
@@ -552,7 +552,7 @@ elif page == "🔍  Said vs Did":
             github_activity_pct,
             said_vs_did_gap,
             said_vs_did_classification
-        FROM fct_said_vs_did
+        FROM TECH_ECOSYSTEM.RAW_ANALYTICS.fct_said_vs_did
         WHERE avg_survey_adoption_pct IS NOT NULL
            OR github_activity_pct IS NOT NULL
         ORDER BY year, abs(said_vs_did_gap) DESC NULLS LAST
@@ -729,7 +729,7 @@ elif page == "💰  Developer Economics":
             p75_salary,
             salary_premium_pct,
             global_median_salary
-        FROM fct_salary_by_stack
+        FROM TECH_ECOSYSTEM.RAW_ANALYTICS.fct_salary_by_stack
         WHERE median_salary IS NOT NULL
           AND respondent_count >= 10
         ORDER BY survey_year DESC, median_salary DESC
