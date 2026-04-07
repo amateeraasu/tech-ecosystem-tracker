@@ -170,24 +170,65 @@ st.markdown(
         margin: 1.5rem 0 0.75rem 0;
     }
 
-    /* Base readability (main app) */
-    [data-testid="stAppViewContainer"] {
-        background: #0E1117;
-        color: #FAFAFA;
+    /* ── Main app background & base text ──────────────────────────────────── */
+    .stApp, [data-testid="stAppViewContainer"] {
+        background-color: #0E1117 !important;
+        color: #FAFAFA !important;
     }
-    [data-testid="stAppViewContainer"] .stMarkdown,
-    [data-testid="stAppViewContainer"] .stMarkdown p,
-    [data-testid="stAppViewContainer"] .stMarkdown li,
-    [data-testid="stAppViewContainer"] label,
-    [data-testid="stAppViewContainer"] [data-testid="stMetricLabel"],
-    [data-testid="stAppViewContainer"] [data-testid="stWidgetLabel"] {
-        color: #FAFAFA;
+
+    /* ── All labels, text, headings in main content ────────────────────────── */
+    p, span, div, h1, h2, h3, h4, h5, h6 { color: #FAFAFA !important; }
+    label { color: #FAFAFA !important; }
+    small, .stCaption { color: #B0B0B0 !important; }
+
+    /* ── Radio buttons (main content) ──────────────────────────────────────── */
+    [role="radiogroup"] label,
+    [role="radiogroup"] label > div,
+    [role="radiogroup"] label p,
+    [role="radiogroup"] label span,
+    [data-testid="stRadio"] label,
+    [data-testid="stRadio"] label p,
+    [data-testid="stRadio"] label span { color: #FAFAFA !important; }
+
+    /* ── Checkboxes, selectboxes, sliders, text inputs ─────────────────────── */
+    [data-testid="stCheckbox"] label,
+    [data-testid="stSelectbox"] label,
+    [data-testid="stMultiSelect"] label,
+    [data-testid="stSlider"] label,
+    [data-testid="stNumberInput"] label,
+    [data-testid="stTextInput"] label,
+    [data-testid="stWidgetLabel"],
+    [data-testid="stWidgetLabel"] p { color: #FAFAFA !important; }
+
+    /* ── Selectbox dropdown text ────────────────────────────────────────────── */
+    [data-baseweb="select"] * { color: #FAFAFA !important; }
+    [data-baseweb="select"] [data-baseweb="input"] { color: #FAFAFA !important; }
+
+    /* ── Expanders ──────────────────────────────────────────────────────────── */
+    [data-testid="stExpander"] summary,
+    [data-testid="stExpander"] summary p,
+    [data-testid="stExpander"] summary span { color: #FAFAFA !important; }
+    [data-testid="stExpander"] summary {
+        background-color: rgba(255,255,255,0.04) !important;
     }
-    [data-testid="stAppViewContainer"] small,
-    [data-testid="stAppViewContainer"] .stCaption,
-    [data-testid="stAppViewContainer"] .stMarkdown blockquote {
-        color: #C8D6E0;
+
+    /* ── Dataframe ──────────────────────────────────────────────────────────── */
+    [data-testid="stDataFrame"] th { color: #FFFFFF !important; background: rgba(255,255,255,0.1) !important; }
+    [data-testid="stDataFrame"] td { color: #FAFAFA !important; }
+
+    /* ── Plotly chart text override ─────────────────────────────────────────── */
+    .js-plotly-plot .plotly text { fill: #FAFAFA !important; }
+    [data-testid="stPlotlyChart"] { background: rgba(255,255,255,0.02); border-radius: 8px; }
+
+    /* ── Tabs ───────────────────────────────────────────────────────────────── */
+    [data-baseweb="tab-list"] button { color: #B0B0B0 !important; }
+    [data-baseweb="tab-list"] button[aria-selected="true"] {
+        color: #29B5E8 !important;
+        border-bottom: 2px solid #29B5E8 !important;
     }
+
+    /* ── Code ───────────────────────────────────────────────────────────────── */
+    code { color: #29B5E8 !important; background: rgba(255,255,255,0.1) !important; }
     </style>
     """,
     unsafe_allow_html=True,
@@ -374,11 +415,13 @@ CHART_LAYOUT = dict(
     template=TMPL,
     plot_bgcolor=CHART_BG,
     paper_bgcolor=PAPER_BG,
+    font=dict(color="#FAFAFA", size=12),
     font_color="#FAFAFA",
-    xaxis=dict(gridcolor=GRID_COLOR, zerolinecolor=GRID_COLOR),
-    yaxis=dict(gridcolor=GRID_COLOR, zerolinecolor=GRID_COLOR),
+    title_font=dict(color="#FFFFFF", size=15),
+    xaxis=dict(gridcolor=GRID_COLOR, zerolinecolor=GRID_COLOR, color="#FAFAFA", title_font=dict(color="#FAFAFA")),
+    yaxis=dict(gridcolor=GRID_COLOR, zerolinecolor=GRID_COLOR, color="#FAFAFA", title_font=dict(color="#FAFAFA")),
     margin=dict(l=10, r=10, t=40, b=10),
-    legend=dict(bgcolor="#161C27", bordercolor="#2A3347", borderwidth=1),
+    legend=dict(bgcolor="#161C27", bordercolor="#2A3347", borderwidth=1, font=dict(color="#FAFAFA")),
 )
 
 COLOR_SEQ = px.colors.qualitative.Vivid
