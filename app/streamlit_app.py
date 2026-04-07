@@ -22,7 +22,6 @@ except Exception:
     _IN_SNOWFLAKE = False
 
 if _IN_SNOWFLAKE:
-    _SF_SESSION.use_warehouse("TECH_WH")
     _SF_SESSION.use_database("TECH_ECOSYSTEM")
     _SF_SESSION.use_schema("RAW_ANALYTICS")
 else:
