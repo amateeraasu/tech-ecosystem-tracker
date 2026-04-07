@@ -20,8 +20,16 @@ CREATE OR REPLACE STREAMLIT TECH_ECOSYSTEM_TRACKER
   QUERY_WAREHOUSE = TECH_WH
   COMMENT = 'Tech Ecosystem Tracker — SO + JetBrains + GitHub analytics';
 
--- ── 3. Grant access ───────────────────────────────────────────────────────────
+-- ── 3. Ensure warehouse exists and role can use it ───────────────────────────
+CREATE WAREHOUSE IF NOT EXISTS TECH_WH
+  WITH WAREHOUSE_SIZE = 'XSMALL'
+  AUTO_SUSPEND = 60
+  AUTO_RESUME = TRUE;
+
+GRANT USAGE ON WAREHOUSE TECH_WH TO ROLE SYSADMIN;
+
+-- ── 4. Grant access to Streamlit app ─────────────────────────────────────────
 GRANT USAGE ON STREAMLIT TECH_ECOSYSTEM_TRACKER TO ROLE SYSADMIN;
 
--- ── 4. Grant Cortex usage for AI insights ────────────────────────────────────
+-- ── 5. Grant Cortex usage for AI insights ────────────────────────────────────
 GRANT DATABASE ROLE SNOWFLAKE.CORTEX_USER TO ROLE SYSADMIN;
