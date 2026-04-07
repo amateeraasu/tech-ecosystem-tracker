@@ -21,7 +21,7 @@ except Exception:
     _SF_SESSION = None
     _IN_SNOWFLAKE = False
 
-else:
+if not _IN_SNOWFLAKE:
     from dotenv import load_dotenv
     import snowflake.connector
     load_dotenv(os.path.join(os.path.dirname(__file__), "..", ".env"))
