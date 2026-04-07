@@ -221,8 +221,14 @@ st.markdown(
     /* ── Option inner text div (BaseWeb wraps text here) ───────────────────── */
     [data-baseweb="menu"] li > div,
     [data-baseweb="menu"] li > div > div,
-    [data-baseweb="menu"] [role="option"] > div {
-        color: #262730 !important;
+    [data-baseweb="menu"] li > div > div > div,
+    [data-baseweb="menu"] li * ,
+    [data-baseweb="menu"] [role="option"] > div,
+    [data-baseweb="popover"] *,
+    [role="listbox"] *,
+    [role="option"] * {
+        color: #000000 !important;
+        background-color: #FFFFFF !important;
     }
 
     /* ── Hover ──────────────────────────────────────────────────────────────── */
