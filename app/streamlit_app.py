@@ -16,14 +16,16 @@ import plotly.graph_objects as go
 try:
     from snowflake.snowpark.context import get_active_session
     _SF_SESSION = get_active_session()
-    _SF_SESSION.sql("USE WAREHOUSE TECH_WH").collect()
-    _SF_SESSION.sql("USE DATABASE TECH_ECOSYSTEM").collect()
     _IN_SNOWFLAKE = True
 except Exception:
     _SF_SESSION = None
     _IN_SNOWFLAKE = False
 
-if not _IN_SNOWFLAKE:
+if _IN_SNOWFLAKE:
+    _SF_SESSION.use_warehouse("TECH_WH")
+    _SF_SESSION.use_database("TECH_ECOSYSTEM")
+    _SF_SESSION.use_schema("RAW_ANALYTICS")
+else:
     from dotenv import load_dotenv
     import snowflake.connector
     load_dotenv(os.path.join(os.path.dirname(__file__), "..", ".env"))
