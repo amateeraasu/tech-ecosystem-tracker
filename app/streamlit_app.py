@@ -16,6 +16,8 @@ import plotly.graph_objects as go
 try:
     from snowflake.snowpark.context import get_active_session
     _SF_SESSION = get_active_session()
+    _SF_SESSION.sql("USE WAREHOUSE TECH_WH").collect()
+    _SF_SESSION.sql("USE DATABASE TECH_ECOSYSTEM").collect()
     _IN_SNOWFLAKE = True
 except Exception:
     _SF_SESSION = None
