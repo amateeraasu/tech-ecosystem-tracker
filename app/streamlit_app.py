@@ -201,8 +201,28 @@ st.markdown(
     [data-testid="stWidgetLabel"] p { color: #FAFAFA !important; }
 
     /* ── Selectbox dropdown text ────────────────────────────────────────────── */
-    [data-baseweb="select"] * { color: #FAFAFA !important; }
-    [data-baseweb="select"] [data-baseweb="input"] { color: #FAFAFA !important; }
+    /* Selected value shown in the button — dark text on white bg */
+    [data-baseweb="select"] div[role="button"],
+    [data-baseweb="select"] div[role="combobox"],
+    [data-baseweb="select"] [data-baseweb="input"],
+    [data-baseweb="select"] input { color: #000000 !important; }
+
+    /* Dropdown list panel */
+    [role="listbox"],
+    [data-baseweb="popover"],
+    [data-baseweb="menu"] { background-color: #FFFFFF !important; }
+
+    /* Options in the list */
+    [role="listbox"] li,
+    [role="option"] { color: #000000 !important; background-color: #FFFFFF !important; }
+    [role="listbox"] li:hover,
+    [role="option"]:hover { background-color: #F0F2F6 !important; color: #000000 !important; }
+
+    /* Selected option */
+    [role="option"][aria-selected="true"] {
+        background-color: #0E4C92 !important;
+        color: #FFFFFF !important;
+    }
 
     /* ── Expanders ──────────────────────────────────────────────────────────── */
     [data-testid="stExpander"] summary,
