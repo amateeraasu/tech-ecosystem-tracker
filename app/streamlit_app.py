@@ -50,6 +50,33 @@ st.markdown(
         background: #161C27;
         border-right: 1px solid #2A3347;
     }
+    /* Force sidebar text to be readable (Streamlit/Snowflake can override theme colors) */
+    [data-testid="stSidebar"] * {
+        color: #FAFAFA !important;
+    }
+    [data-testid="stSidebar"] a,
+    [data-testid="stSidebar"] [role="link"] {
+        color: #FAFAFA !important;
+        text-decoration: none;
+    }
+    /* Sidebar nav (pages) */
+    [data-testid="stSidebarNav"] a {
+        color: #FAFAFA !important;
+        border-radius: 6px;
+    }
+    [data-testid="stSidebarNav"] a:hover {
+        background: rgba(250, 250, 250, 0.08);
+    }
+    [data-testid="stSidebarNav"] a[aria-current="page"] {
+        background: rgba(0, 212, 255, 0.14);
+        border-left: 3px solid #00D4FF;
+        padding-left: 0.75rem;
+    }
+    /* Ensure icons/emoji remain visible */
+    [data-testid="stSidebar"] svg {
+        fill: #FAFAFA !important;
+        color: #FAFAFA !important;
+    }
     [data-testid="stSidebar"] h1, [data-testid="stSidebar"] h2 {
         color: #00D4FF;
     }
