@@ -1,0 +1,8 @@
+name: tech_ecosystem_tracker
+channels:
+  - snowflake
+dependencies:
+  - streamlit
+  - pandas
+  - plotly
+  - anthropic

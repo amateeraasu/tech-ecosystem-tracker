@@ -2,101 +2,118 @@
 
 _Generated on 2026-04-03_
 
-# Tech Ecosystem Tracker: Developer Trends Report 2025
+# Tech Ecosystem Tracker: Developer Trends Report
+### Synthesizing Stack Overflow, JetBrains & GitHub Archive Data
 
 ---
 
 ## Executive Summary
 
-This report synthesizes survey self-reporting, GitHub activity data, and compensation signals to surface the gaps between developer perception and practice, identify which technologies are gaining or losing momentum, and highlight where the highest salary premiums concentrate. The findings reveal a widening credibility gap in survey data, a broad "desire fatigue" across established tools, and a clear compensation premium clustering around systems languages and specialized data infrastructure.
+Developer self-reporting systematically overstates tool usage, aspirational technologies are diverging sharply from incumbent stacks, and the highest-paying languages command salary premiums exceeding 100% above baseline. Engineering leaders who calibrate decisions against actual GitHub activity — not survey sentiment — will gain a significant competitive edge.
 
 ---
 
-## Section 1: Said vs. Did — The Self-Reporting Gap
+## Section 1: Said vs. Did — The Perception Gap
 
-### Key Finding: Developers Systematically Overstate Their Use of Popular Tools
+### Key Finding: Developers Consistently Overstate Their Tool Usage
 
-The most consistent pattern across 2022–2025 is that developers significantly over-report usage of mainstream technologies in surveys relative to their actual GitHub commit activity. This is not a minor rounding error — it is a structural distortion.
+Every technology with matched survey and GitHub data shows a positive gap — meaning developers *claim* higher usage than their commits reflect. This isn't noise; it's a structural pattern.
 
-**The largest absolute gaps (survey % minus GitHub activity %):**
+**The Largest Gaps (Survey % minus GitHub Activity %):**
 
 | Technology | Survey Adoption | GitHub Activity | Gap |
 |---|---|---|---|
-| JavaScript | 63.4% (2023) | 31.9% | **+31.5 pp** |
-| Python | 51.0% (2023) | 16.6% | **+34.3 pp** |
-| HTML/CSS | 53.4% (2022) | No GitHub signal | **+53.4 pp** |
-| SQL | 52.5% (2023) | No GitHub signal | **+52.5 pp** |
+| JavaScript | 63.4% (2023) | 31.9% | **+31.5 pts** |
+| Python | 50.9% (2023) | 16.6% | **+34.3 pts** |
+| Python | 51.0% (2024) | 19.8% | **+31.2 pts** |
+| JavaScript | 59.7% (2024) | 28.7% | **+31.0 pts** |
 
-**What this means:** JavaScript and Python respondents claim adoption at roughly **2× their actual GitHub footprint**. Technologies like SQL, HTML/CSS, PostgreSQL, and MySQL show *no measurable GitHub repository activity* in this dataset — likely because they are embedded in projects rather than surfacing as standalone file activity — yet they dominate survey responses at 38–53%.
+Python and JavaScript consistently show ~30-point inflation across multiple years — not a survey artifact, but a durable signal.
 
-**The "Tool Identity" Effect:** Developers appear to claim proficiency with ubiquitous tools (SQL, HTML/CSS) as professional identity markers rather than as precise usage signals. A developer who writes one SQL query per month may still legitimately check "SQL user" on a survey.
+**Technologies with No GitHub Footprint:**
+SQL, HTML/CSS, PostgreSQL, MySQL, React, Node.js, AWS, and Docker all appear in the "over_reported" category with *zero measurable GitHub activity* in this dataset. The gaps are mechanically equal to their survey adoption rates (37–53 points for SQL and HTML/CSS). This likely reflects a **measurement boundary**: these technologies live in private repositories, cloud consoles, or non-code artifacts that GitHub Archive doesn't capture well.
 
-**Shell is the honest outlier.** Shell scripting shows ~2.0–2.2% GitHub activity with no survey counterpart — it is *used* without being *claimed*, the inverse of the over-reporting pattern. This suggests Shell is treated as infrastructure rather than a career skill.
+**What's Actually Consistent:**
+Shell scripting holds steady at ~1.9–2.2% GitHub activity across 2023–2025 with no survey counterpart — suggesting it's an honest, unglamorous workhorse that developers don't bother claiming in surveys but quietly depend on every day.
 
-**Actionable Insight for Leaders:** Treat survey-based technology adoption numbers as *upper bounds*, not ground truth. For workforce planning or vendor decisions, triangulate against repository activity, CI/CD tooling logs, and package manager data. Python's real footprint is roughly half what surveys suggest; JavaScript's is closer to 30% of public repositories, not 60%+.
+### Actionable Insights
+- **For hiring managers:** Treat self-reported proficiency claims skeptically. A candidate claiming Python expertise may have primarily used it as a secondary tool. Require portfolio evidence or code assessments.
+- **For survey consumers:** Normalize survey data against a ~30-point inflation factor for dominant languages when estimating true active usage.
+- **For platform teams:** Shell scripting's quiet consistency signals it remains critical infrastructure glue — don't neglect tooling investment here.
 
 ---
 
 ## Section 2: Emerging vs. Dying Technologies
 
-### Key Finding: Desire Has Broadly Collapsed — Almost Nothing Is Gaining Ground
+### Key Finding: Desire is Collapsing Faster Than Adoption — Even for Dominant Tools
 
-The lifecycle data presents a striking and somewhat alarming picture: **43 out of 44 technologies in the dataset are classified as "declining" or "established but waning."** Only Deno registers as unambiguously "emerging" with a positive desire gap of +1.08 pp.
+The most striking pattern in this data is not that niche tools are declining — it's that the *entire incumbent stack* shows negative desire gaps. Developers are actively using technologies they no longer *want* to use.
 
-### The Emerging & Growing-Interest Tier
+**The Declining Majority — Notable Cases:**
 
-| Technology | Adoption | Desire Gap | YoY Change | Signal |
+| Technology | Adoption % | Desire % | Gap |
+|---|---|---|---|
+| JavaScript | 42.7% | 21.5% | **-21.2 pts** |
+| HTML/CSS | 40.0% | 21.7% | **-18.4 pts** |
+| SQL | 37.9% | 22.9% | **-15.0 pts** |
+| Python | 37.4% | 25.3% | **-12.2 pts** |
+| MySQL | 21.5% | 10.4% | **-11.1 pts** |
+| Node.js | 23.5% | 13.8% | **-9.6 pts** |
+| React | 21.5% | 14.3% | **-7.3 pts** |
+
+JavaScript's -21.2 point desire gap is the widest in the dataset. Nearly half of all developers use it; barely half of those *want* to. This is the clearest indicator of **technological debt at ecosystem scale**.
+
+**Legacy Technologies Accelerating Out:**
+PHP (-6.4 pts, declining YoY), jQuery (-7.2 pts), and ASP.NET (-3.9 pts) are losing desire at rates proportional to their aging user bases. These are managed declines, not surprises.
+
+**Surprising Declines:**
+- **FastAPI** (-1.18 pts desire gap, -0.22% YoY adoption): Once the Python framework darling, it's plateauing quickly.
+- **Dart/Flutter** (-0.47 pts, -1.66% YoY adoption): Flutter's mobile promise hasn't translated into sustained developer enthusiasm.
+- **Next.js** (-3.06 pts): Despite strong mindshare, desire is eroding — possibly due to framework complexity and frequent breaking changes.
+
+**The Emerging and Growing-Interest Cohort:**
+
+Only **Deno** qualifies as truly *emerging* (+1.08 pts desire gap, +0.51% YoY adoption growth) — making it the lone technology in the dataset gaining both desire *and* usage simultaneously.
+
+The **growing interest** cohort is more nuanced — high desire but declining adoption, suggesting aspirational friction:
+
+| Technology | Adoption % | Desire % | Gap | YoY Adoption |
 |---|---|---|---|---|
-| **Rust** | 9.6% | **+9.23 pp** | -1.95% | Desire far outpaces adoption |
-| **Go** | 10.6% | **+4.46 pp** | -1.77% | Strong aspiration, adoption plateau |
-| **Zig** | 1.4% | **+3.53 pp** | +0.36% | Only language growing in both desire AND adoption |
-| **Elixir** | 1.7% | **+1.98 pp** | -0.18% | Niche but sticky desire premium |
-| **Svelte** | 3.5% | **+1.68 pp** | -1.32% | Enthusiasm persists despite adoption dip |
-| **Deno** | 1.95% | **+1.08 pp** | +0.51% | Sole "emerging" classification; growing |
+| Rust | 9.6% | 18.8% | **+9.2 pts** | -1.95% |
+| Go | 10.6% | 15.1% | **+4.5 pts** | -1.77% |
+| Zig | 1.4% | 4.9% | **+3.5 pts** | +0.36% |
+| Elixir | 1.7% | 3.7% | **+1.98 pts** | -0.18% |
+| Svelte | 3.5% | 5.2% | **+1.68 pts** | -1.32% |
 
-**Rust** remains the most aspirational language in the dataset by a wide margin — developers *want* to use it at nearly double the rate they currently do. Yet adoption is actually *declining* year-over-year (-1.95%), suggesting a persistent gap between enthusiasm and organizational uptake. This is the "Rust paradox": universally admired, structurally under-deployed.
+Rust's +9.2 desire gap is the highest in the dataset — but its adoption *fell* 1.95 points YoY. Developers want to use Rust; the learning curve and ecosystem maturity are slowing them down. Go shows a similar pattern. **Zig is the exception**: a modest but real +0.36% adoption growth alongside strong desire suggests early-stage genuine uptake.
 
-**Zig** is the genuine dark horse. It is the only language showing *positive* adoption growth (+0.36% YoY) alongside strong desire (+3.53 pp). With existing GitHub activity dating to 2022 and a lean systems-programming profile, Zig is the most credible niche challenger to watch.
+**Bun** (2.73% adoption, +0.31 desire gap) enters the dataset without prior YoY data but shows immediate positive desire — worth watching as a Node.js challenger.
 
-**Deno** shows real momentum (+0.51% YoY adoption growth) and is the only platform-tier technology with a positive desire gap. Its rivalry with Node.js is not yet a threat at 1.95% adoption, but directional signals are real.
-
-### The Declining Tier — Notable Casualties
-
-The decline signals are broad, but severity varies sharply:
-
-- **JavaScript** (-21.2 pp desire gap) and **HTML/CSS** (-18.4 pp) lead all technologies in desire collapse — developers are burned out on the front-end stack.
-- **SQL** (-15.0 pp) and **Python** (-12.2 pp) show massive desire deficits despite still being the most-used languages — saturation, not failure.
-- **MySQL** (-11.1 pp), **Node.js** (-9.6 pp), and **Java** (-8.9 pp) are all shedding enthusiasm faster than adoption.
-- **FastAPI** (-1.18 pp) is a notable surprise — it rose quickly as a Python API framework darling but is already showing desire decay at only 7.1% adoption.
-- **Dart/Flutter** (-1.66% YoY, -0.47 pp desire gap) is losing ground, raising questions about Flutter's long-term community trajectory outside mobile-first markets.
-
-**The "Established But Waning" Category** (Kubernetes, Snowflake, Perl, Lua) deserves attention: these technologies have stabilized adoption but are not inspiring future demand. Kubernetes at 14.2% adoption with a -0.45 pp desire gap signals it is becoming *expected infrastructure* rather than a differentiating skill.
-
-**Actionable Insight for Developers:** If you are early-career, investing in Rust and Go remains high-signal even if organizational adoption lags — demand will clear. Avoid doubling down on FastAPI, Flask, or Django as primary identity skills; Python web frameworks are fragmenting and losing mindshare. For front-end specialists, the data suggests growing developer fatigue with the JavaScript ecosystem broadly.
+### Actionable Insights
+- **For developers:** Rust, Go, and Zig offer the best combination of high desire and salary premium (see Section 3). The investment cost is real but quantifiably worth it.
+- **For engineering leaders:** The negative desire gap for JavaScript and SQL doesn't mean abandoning them — it means prioritizing developer experience investments (better tooling, TypeScript migration, ORM abstraction) to reduce the friction of mandatory tools.
+- **For framework decisions:** Avoid locking into Next.js or FastAPI as long-term strategic bets without evaluating emerging alternatives. Svelte and Deno show healthier desire trajectories at smaller scale.
 
 ---
 
-## Section 3: Salary Premiums by Stack
+## Section 3: Salary Premiums — Where the Money Is
 
-### Key Finding: Systems Languages and Specialized Data Infrastructure Command Extraordinary Premiums
+### Key Finding: Functional and Systems Languages Command Extraordinary Premiums
 
-The compensation data — drawn from respondents reporting salaries — reveals a consistent clustering of premium pay around three profiles: **functional/systems programming languages**, **specialized NoSQL and cloud-native databases**, and **cloud platform expertise**.
+Salary premiums are calculated against a baseline, and the top of the table is dominated by languages that fewer than 5% of developers use — but that pay over 100% above that baseline.
 
-### Top 10 Salary Premiums (vs. baseline)
+**Top Salary Premium Technologies:**
 
-| Technology | Avg. Median Salary | Premium vs. Baseline | Sample Size |
+| Technology | Avg. Median Salary | Premium vs. Baseline | Respondents |
 |---|---|---|---|
-| **Scala** | $203,633 | **+103.6%** | 267 |
-| **Clojure** | $196,102 | **+96.1%** | 201 |
-| **Cassandra** | $193,289 | **+93.3%** | 184 |
-| **Go** | $190,488 | **+90.5%** | 1,176 |
-| **DynamoDB** | $189,278 | **+89.3%** | 978 |
-| **Elixir** | $188,969 | **+89.0%** | 272 |
-| **Objective-C** | $185,807 | **+85.8%** | 241 |
-| **Assembly** | $182,978 | **+83.0%** | 263 |
-| **Ruby** | $182,751 | **+82.8%** | 851 |
-| **Neo4j** | $180,259 | **+80.3%** | 155 |
+| Scala | $203,633 | **+103.6%** | 267 |
+| Clojure | $196,102 | **+96.1%** | 201 |
+| Cassandra | $193,289 | **+93.3%** | 184 |
+| Go | $190,488 | **+90.5%** | 1,176 |
+| DynamoDB | $189,278 | **+89.3%** | 978 |
+| Elixir | $188,969 | **+89.0%** | 272 |
+| Rust | $178,663 | **+78.7%** | 824 |
+| Kotlin | $177,365 | **+77.4%** | 598 |
 
-**Three structural observations:**
-
-1. **The functional language premium is real and large.** Scala (+103.6%), Clojure (+96.1%), and Elixir (+89.0%) are used by senior engineers solving
+**The Scale-Adjusted Winners:**
+Small respondent pools can inflate premiums (
