@@ -1,0 +1,139 @@
+<svg viewBox="0 0 1200 900" xmlns="http://www.w3.org/2000/svg">
+  <!-- Styles -->
+  <defs>
+    <style>
+      .title { font: bold 24px sans-serif; fill: #1a1a1a; }
+      .layer-title { font: bold 16px sans-serif; fill: #2d3748; }
+      .box-title { font: bold 14px sans-serif; fill: #1a1a1a; }
+      .detail { font: 12px sans-serif; fill: #4a5568; }
+      .arrow { stroke: #3182ce; stroke-width: 2; fill: none; marker-end: url(#arrowhead); }
+      .box { stroke: #cbd5e0; stroke-width: 2; fill: #ffffff; }
+      .layer-bg { fill: #f7fafc; stroke: #e2e8f0; stroke-width: 1; }
+      .source-box { fill: #ebf8ff; stroke: #3182ce; stroke-width: 2; }
+      .warehouse-box { fill: #e6fffa; stroke: #38b2ac; stroke-width: 2; }
+      .transform-box { fill: #fef5e7; stroke: #f59e0b; stroke-width: 2; }
+      .consume-box { fill: #fce7f3; stroke: #d946ef; stroke-width: 2; }
+    </style>
+    <marker id="arrowhead" markerWidth="10" markerHeight="10" refX="9" refY="3" orient="auto">
+      <polygon points="0 0, 10 3, 0 6" fill="#3182ce" />
+    </marker>
+  </defs>
+
+  <!-- Main Title -->
+  <text x="600" y="30" text-anchor="middle" class="title">Tech Ecosystem Tracker - Architecture</text>
+
+  <!-- Layer 1: Data Sources -->
+  <rect x="50" y="60" width="1100" height="140" rx="8" class="layer-bg"/>
+  <text x="600" y="85" text-anchor="middle" class="layer-title">DATA SOURCES</text>
+
+  <!-- Stack Overflow -->
+  <rect x="100" y="100" width="280" height="80" rx="6" class="source-box"/>
+  <text x="240" y="125" text-anchor="middle" class="box-title">Stack Overflow Survey</text>
+  <text x="240" y="145" text-anchor="middle" class="detail">2021-2025</text>
+  <text x="240" y="163" text-anchor="middle" class="detail">~100K responses/year</text>
+
+  <!-- JetBrains -->
+  <rect x="460" y="100" width="280" height="80" rx="6" class="source-box"/>
+  <text x="600" y="125" text-anchor="middle" class="box-title">JetBrains Dev Survey</text>
+  <text x="600" y="145" text-anchor="middle" class="detail">2023-2025</text>
+  <text x="600" y="163" text-anchor="middle" class="detail">~35K responses/year</text>
+
+  <!-- GitHub -->
+  <rect x="820" y="100" width="280" height="80" rx="6" class="source-box"/>
+  <text x="960" y="125" text-anchor="middle" class="box-title">GitHub Archive</text>
+  <text x="960" y="145" text-anchor="middle" class="detail">BigQuery → CSV</text>
+  <text x="960" y="163" text-anchor="middle" class="detail">Aggregated repo activity</text>
+
+  <!-- Arrows from sources to warehouse -->
+  <line x1="240" y1="180" x2="240" y2="220" class="arrow"/>
+  <line x1="600" y1="180" x2="600" y2="220" class="arrow"/>
+  <line x1="960" y1="180" x2="600" y2="220" class="arrow"/>
+
+  <!-- Layer 2: Snowflake Warehouse -->
+  <rect x="50" y="230" width="1100" height="160" rx="8" class="layer-bg"/>
+  <text x="600" y="255" text-anchor="middle" class="layer-title">SNOWFLAKE DATA WAREHOUSE</text>
+
+  <rect x="300" y="270" width="600" height="100" rx="6" class="warehouse-box"/>
+  <text x="600" y="295" text-anchor="middle" class="box-title">Database: TECH_ECOSYSTEM</text>
+  <text x="600" y="315" text-anchor="middle" class="detail">Warehouse: TECH_WH</text>
+  <text x="400" y="335" text-anchor="start" class="detail">📁 Schema: RAW (raw CSVs)</text>
+  <text x="400" y="352" text-anchor="start" class="detail">📁 Schema: RAW_STAGING (dbt staging)</text>
+  <text x="700" y="335" text-anchor="start" class="detail">📁 Schema: RAW_ANALYTICS (marts)</text>
+
+  <!-- Arrow to dbt -->
+  <line x1="600" y1="390" x2="600" y2="430" class="arrow"/>
+
+  <!-- Layer 3: dbt Transformations -->
+  <rect x="50" y="440" width="1100" height="230" rx="8" class="layer-bg"/>
+  <text x="600" y="465" text-anchor="middle" class="layer-title">dbt TRANSFORMATION PIPELINE</text>
+
+  <!-- Staging -->
+  <rect x="100" y="485" width="220" height="160" rx="6" class="transform-box"/>
+  <text x="210" y="508" text-anchor="middle" class="box-title">1. Staging</text>
+  <text x="120" y="530" text-anchor="start" class="detail">• stg_stackoverflow__*</text>
+  <text x="120" y="548" text-anchor="start" class="detail">• stg_jetbrains__*</text>
+  <text x="120" y="566" text-anchor="start" class="detail">• stg_github__*</text>
+  <text x="120" y="590" text-anchor="start" class="detail" font-weight="bold">Clean & standardize</text>
+  <text x="120" y="608" text-anchor="start" class="detail" font-weight="bold">each source</text>
+
+  <!-- Intermediate -->
+  <rect x="370" y="485" width="240" height="160" rx="6" class="transform-box"/>
+  <text x="490" y="508" text-anchor="middle" class="box-title">2. Intermediate</text>
+  <text x="385" y="530" text-anchor="start" class="detail">• int_technology_spine</text>
+  <text x="385" y="548" text-anchor="start" class="detail">• int_yearly_rollups</text>
+  <text x="385" y="566" text-anchor="start" class="detail">• int_salary_trends</text>
+  <text x="385" y="590" text-anchor="start" class="detail" font-weight="bold">Cross-source</text>
+  <text x="385" y="608" text-anchor="start" class="detail" font-weight="bold">integration</text>
+
+  <!-- Marts -->
+  <rect x="660" y="485" width="230" height="160" rx="6" class="transform-box"/>
+  <text x="775" y="508" text-anchor="middle" class="box-title">3. Marts</text>
+  <text x="675" y="530" text-anchor="start" class="detail">• fct_said_vs_did</text>
+  <text x="675" y="548" text-anchor="start" class="detail">• fct_technology_adoption</text>
+  <text x="675" y="566" text-anchor="start" class="detail">• fct_salary_by_stack</text>
+  <text x="675" y="584" text-anchor="start" class="detail">• dim_technologies</text>
+  <text x="675" y="608" text-anchor="start" class="detail" font-weight="bold">Analytics-ready</text>
+
+  <!-- Monitoring -->
+  <rect x="940" y="485" width="200" height="160" rx="6" class="transform-box"/>
+  <text x="1040" y="508" text-anchor="middle" class="box-title">4. Monitoring</text>
+  <text x="955" y="540" text-anchor="start" class="detail">• alert_adoption_</text>
+  <text x="970" y="558" text-anchor="start" class="detail">anomalies</text>
+  <text x="955" y="590" text-anchor="start" class="detail" font-weight="bold">Anomaly</text>
+  <text x="955" y="608" text-anchor="start" class="detail" font-weight="bold">detection</text>
+
+  <!-- Arrows between dbt stages -->
+  <line x1="320" y1="565" x2="360" y2="565" class="arrow"/>
+  <line x1="610" y1="565" x2="650" y2="565" class="arrow"/>
+  
+  <!-- Arrow to consumption -->
+  <line x1="775" y1="670" x2="775" y2="710" class="arrow"/>
+
+  <!-- Layer 4: Consumption -->
+  <rect x="50" y="720" width="1100" height="140" rx="8" class="layer-bg"/>
+  <text x="600" y="745" text-anchor="middle" class="layer-title">CONSUMPTION LAYER</text>
+
+  <!-- Streamlit -->
+  <rect x="300" y="765" width="280" height="70" rx="6" class="consume-box"/>
+  <text x="440" y="790" text-anchor="middle" class="box-title">Streamlit Dashboard</text>
+  <text x="440" y="808" text-anchor="middle" class="detail">Interactive charts & filters</text>
+  <text x="440" y="823" text-anchor="middle" class="detail">Deployed in Snowflake</text>
+
+  <!-- Claude API -->
+  <rect x="620" y="765" width="280" height="70" rx="6" class="consume-box"/>
+  <text x="760" y="790" text-anchor="middle" class="box-title">Claude API</text>
+  <text x="760" y="808" text-anchor="middle" class="detail">AI-powered insights</text>
+  <text x="760" y="823" text-anchor="middle" class="detail">Narrative generation</text>
+
+  <!-- Legend -->
+  <rect x="950" y="765" width="180" height="70" rx="4" fill="#ffffff" stroke="#cbd5e0"/>
+  <text x="1040" y="785" text-anchor="middle" class="detail" font-weight="bold">Stack:</text>
+  <text x="1040" y="802" text-anchor="middle" class="detail">Snowflake + dbt</text>
+  <text x="1040" y="817" text-anchor="middle" class="detail">Python + Streamlit</text>
+  <text x="1040" y="832" text-anchor="middle" class="detail">Claude API</text>
+
+  <!-- End Users note -->
+  <text x="600" y="890" text-anchor="middle" class="detail" font-style="italic">
+    End Users: Analysts, Developers, Hiring Managers → Trend insights & stack decisions
+  </text>
+</svg>
